@@ -1,2 +1,2 @@
-def test_model_example():
-    assert 1 + 1 == 2  # Another placeholder test
+def test_model():
+    assert True
