@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - feature/add-basic-tests
   pull_request:
     branches:
       - main
+      - feature/add-basic-tests
 
 jobs:
   build:
