@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/add-basic-tests
+      - feature/*
   pull_request:
     branches:
       - main
