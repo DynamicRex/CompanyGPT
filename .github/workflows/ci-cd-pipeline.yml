@@ -8,7 +8,7 @@ on:
   pull_request:
     branches:
       - main
-      - feature/add-basic-tests
+      - feature/*
 
 jobs:
   build:
@@ -18,10 +18,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    # Backend setup (Python)
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.10'  # Ensure this matches your local environment
+        python-version: '3.10'  # Match the version used in your local environment
 
     - name: Install backend dependencies
       run: |
@@ -32,8 +33,16 @@ jobs:
       run: |
         pytest backend/tests
       env:
-        PYTHONPATH: ./backend  # This makes sure Python can find your backend module
+        PYTHONPATH: ./backend  # Makes sure Python can find your backend modules
 
+    # Ensure FastAPI can start (even if skeleton)
+    - name: Start FastAPI Application (Testing API skeleton)
+      run: |
+        uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload &
+        sleep 10
+        curl http://127.0.0.1:8000
+
+    # Frontend setup (Node.js)
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
