@@ -5,6 +5,7 @@ from backend.utils.config import users_collection
 from bson.objectid import ObjectId
 from passlib.context import CryptContext
 from datetime import datetime
+from pydantic import EmailStr
 import uuid
 
 router = APIRouter()
@@ -18,10 +19,9 @@ def hash_password(password: str) -> str:
 
 # Superuser Signup Endpoint
 @router.post("/signup")
-async def signup(full_name: str = Body(...), email: str = Body(...), password: str = Body(...),
+async def signup(full_name: str = Body(...), email: EmailStr = Body(...), password: str = Body(...),
                  company_name: str = Body(...), company_address: str = Body(...),
                  industry_type: str = Body(...), number_of_employees: int = Body(...)):
-
     # Check if the user already exists
     existing_user = await users_collection.find_one({"email": email})
     if existing_user:
@@ -56,8 +56,7 @@ async def signup(full_name: str = Body(...), email: str = Body(...), password: s
 # Regular User Creation by Superuser
 @router.post("/add-user")
 async def add_user(superuser_id: str = Body(...), full_name: str = Body(...),
-                   email: str = Body(...), password: str = Body(...)):
-
+                   email: EmailStr = Body(...), password: str = Body(...)):
     # Check if superuser exists (now handling superuser_id as a string, not ObjectId)
     superuser = await users_collection.find_one({"_id": superuser_id, "role": "superuser"})
     if not superuser:
