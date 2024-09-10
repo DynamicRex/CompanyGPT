@@ -1,13 +1,14 @@
-# backend/api/auth/endpoints.py
-
 from fastapi import APIRouter, HTTPException, Body, Depends
 from backend.utils.config import users_collection, ACCESS_TOKEN_EXPIRE_MINUTES
-from backend.utils.security import create_access_token
+from backend.utils.security import create_access_token, verify_token
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from pydantic import EmailStr
-from bson.objectid import ObjectId
 from datetime import datetime, timedelta
+from jose import JWTError
 import uuid
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 router = APIRouter()
 
@@ -21,6 +22,18 @@ def hash_password(password: str) -> str:
 # Helper function to verify passwords
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
+
+# Helper function to get the current authenticated user
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    email = verify_token(token)
+    if email is None:
+        raise HTTPException(status_code=401, detail="Invalid token or token expired")
+    
+    # Check if the user exists in the database
+    user = await users_collection.find_one({"email": email})
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    return user
 
 # Superuser Signup Endpoint
 @router.post("/signup")
@@ -113,3 +126,8 @@ async def login(email: EmailStr = Body(...), password: str = Body(...)):
     )
     
     return {"access_token": access_token, "token_type": "bearer"}
+
+# Protected Route Example
+@router.get("/protected-route")
+async def protected_route(current_user: dict = Depends(get_current_user)):
+    return {"message": f"Hello, {current_user['full_name']}. This is a protected route."}
