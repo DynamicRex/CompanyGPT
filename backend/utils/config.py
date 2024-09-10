@@ -1,22 +1,21 @@
 import os
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson.objectid import ObjectId
+from datetime import timedelta
 
-# Existing configuration (for SQLite or other DB)
+# Existing configuration
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
+ALGORITHM = "HS256"  # HMAC SHA-256 algorithm for JWT
+ACCESS_TOKEN_EXPIRE_MINUTES = 30  # Token expiry time
 
-# MongoDB connection string (replace with your actual connection string)
+# MongoDB connection
 MONGO_DETAILS = "mongodb+srv://visionroots0:OqGvDWGoEhosMs6L@companygpt.ls74t.mongodb.net/?retryWrites=true&w=majority&appName=CompanyGPT"
-
-# MongoDB Client
 client = AsyncIOMotorClient(MONGO_DETAILS)
+database = client["CompanyGPT"]
+users_collection = database.get_collection("users")
 
-# Access the specific database and collection
-database = client["CompanyGPT"]  # Replace with your desired database name
-users_collection = database.get_collection("users")  # "users" collection
-
-# Ensure indexes (create if not exists)
+# Ensure indexes
 users_collection.create_index("email", unique=True)
 users_collection.create_index("company_id")
 

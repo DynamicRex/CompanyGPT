@@ -1,11 +1,12 @@
 # backend/api/auth/endpoints.py
 
-from fastapi import APIRouter, HTTPException, Body
-from backend.utils.config import users_collection
-from bson.objectid import ObjectId
+from fastapi import APIRouter, HTTPException, Body, Depends
+from backend.utils.config import users_collection, ACCESS_TOKEN_EXPIRE_MINUTES
+from backend.utils.security import create_access_token
 from passlib.context import CryptContext
-from datetime import datetime
 from pydantic import EmailStr
+from bson.objectid import ObjectId
+from datetime import datetime, timedelta
 import uuid
 
 router = APIRouter()
@@ -16,6 +17,10 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # Helper function to hash passwords
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
+
+# Helper function to verify passwords
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
 
 # Superuser Signup Endpoint
 @router.post("/signup")
@@ -88,3 +93,23 @@ async def add_user(superuser_id: str = Body(...), full_name: str = Body(...),
     await users_collection.insert_one(user_data)
 
     return {"message": "User account created successfully", "user_id": str(user_data["_id"])}
+
+# Login Endpoint
+@router.post("/login")
+async def login(email: EmailStr = Body(...), password: str = Body(...)):
+    # Check if user exists
+    user = await users_collection.find_one({"email": email})
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid email or password")
+    
+    # Verify password
+    if not verify_password(password, user["password_hash"]):
+        raise HTTPException(status_code=400, detail="Invalid email or password")
+    
+    # Create JWT token
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user["email"]}, expires_delta=access_token_expires
+    )
+    
+    return {"access_token": access_token, "token_type": "bearer"}
