@@ -131,3 +131,14 @@ async def login(email: EmailStr = Body(...), password: str = Body(...)):
 @router.get("/protected-route")
 async def protected_route(current_user: dict = Depends(get_current_user)):
     return {"message": f"Hello, {current_user['full_name']}. This is a protected route."}
+
+# Logout Endpoint (Client-side token removal)
+@router.post("/logout")
+async def logout(current_user: dict = Depends(get_current_user)):
+    """
+    Logout simply invalidates the token on the client side.
+    The client should remove the token from storage (e.g., local storage, cookies).
+    """
+    # Since JWT is stateless, we cannot "invalidate" the token server-side.
+    # Simply instruct the client to remove the token.
+    return {"message": f"Goodbye, {current_user['full_name']}. Token should be removed client-side."}
