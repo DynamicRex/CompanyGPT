@@ -2,6 +2,10 @@ from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt  # PyJWT works with the 'jose' library for encoding and decoding
 from backend.utils.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from passlib.context import CryptContext
+
+# Password encryption context
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Function to create an access token
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
@@ -24,3 +28,11 @@ def verify_token(token: str):
         return email
     except JWTError:
         return None
+
+# Function to hash passwords
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
+# Function to verify passwords
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)

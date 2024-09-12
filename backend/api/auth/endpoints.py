@@ -1,27 +1,15 @@
 from fastapi import APIRouter, HTTPException, Body, Depends
 from backend.utils.config import users_collection, ACCESS_TOKEN_EXPIRE_MINUTES
-from backend.utils.security import create_access_token, verify_token
+from backend.utils.security import create_access_token, verify_token, hash_password, verify_password
 from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
-from pydantic import EmailStr
+from pydantic import EmailStr, BaseModel
 from datetime import datetime, timedelta
-from jose import JWTError
+from bson import ObjectId
 import uuid
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 router = APIRouter()
-
-# Password encryption context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# Helper function to hash passwords
-def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
-
-# Helper function to verify passwords
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
 
 # Helper function to get the current authenticated user
 async def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -139,6 +127,91 @@ async def logout(current_user: dict = Depends(get_current_user)):
     Logout simply invalidates the token on the client side.
     The client should remove the token from storage (e.g., local storage, cookies).
     """
-    # Since JWT is stateless, we cannot "invalidate" the token server-side.
-    # Simply instruct the client to remove the token.
     return {"message": f"Goodbye, {current_user['full_name']}. Token should be removed client-side."}
+
+# Update Superuser Profile
+class SuperuserProfileUpdate(BaseModel):
+    full_name: str = None
+    password: str = None
+    company_name: str = None
+    company_address: str = None
+    industry_type: str = None
+    number_of_employees: int = None
+
+@router.put("/update-profile/superuser")
+async def update_superuser_profile(
+    updates: SuperuserProfileUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    # Ensure the user is a superuser
+    if current_user['role'] != "superuser":
+        raise HTTPException(status_code=403, detail="Only superusers can update this profile")
+
+    update_data = {}
+
+    # Update fields if provided
+    if updates.full_name:
+        update_data["full_name"] = updates.full_name
+    if updates.password:
+        update_data["password_hash"] = hash_password(updates.password)  # Rehash password
+    if updates.company_name:
+        update_data["company_name"] = updates.company_name
+    if updates.company_address:
+        update_data["company_address"] = updates.company_address
+    if updates.industry_type:
+        update_data["industry_type"] = updates.industry_type
+    if updates.number_of_employees is not None:
+        update_data["number_of_employees"] = updates.number_of_employees
+
+    # Check if _id is a valid ObjectId, otherwise treat it as a string
+    user_id = current_user["_id"]
+    try:
+        user_id = ObjectId(user_id)  # Convert to ObjectId if valid
+    except:
+        pass  # Keep it as a string if not a valid ObjectId
+
+    # Update the user document in MongoDB
+    if update_data:
+        update_data["updated_at"] = datetime.utcnow()
+        await users_collection.update_one({"_id": user_id}, {"$set": update_data})
+        return {"message": "Superuser profile updated successfully"}
+
+    return {"message": "No fields to update"}
+
+# Update Regular User Profile
+class UserProfileUpdate(BaseModel):
+    full_name: str = None
+    password: str = None
+
+@router.put("/update-profile/user")
+async def update_user_profile(
+    updates: UserProfileUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    # Ensure the user is a regular user
+    if current_user['role'] != "user":
+        raise HTTPException(status_code=403, detail="Only regular users can update this profile")
+
+    update_data = {}
+
+    # Update fields if provided
+    if updates.full_name:
+        update_data["full_name"] = updates.full_name
+    if updates.password:
+        update_data["password_hash"] = hash_password(updates.password)  # Rehash password
+
+    # Check if _id is a valid ObjectId, otherwise treat it as a string
+    user_id = current_user["_id"]
+    try:
+        user_id = ObjectId(user_id)  # Convert to ObjectId if valid
+    except:
+        pass  # Keep it as a string if not a valid ObjectId
+
+    # Update the user document in MongoDB
+    if update_data:
+        update_data["updated_at"] = datetime.utcnow()
+        await users_collection.update_one({"_id": user_id}, {"$set": update_data})
+        return {"message": "User profile updated successfully"}
+
+    return {"message": "No fields to update"}
+
