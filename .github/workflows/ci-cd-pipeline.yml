@@ -15,10 +15,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Checkout Code
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # Backend setup (Python)
+    # Step 2: Backend setup (Python)
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
@@ -29,24 +30,28 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r backend/requirements.txt
 
+    - name: Verify Backend Dependencies
+      run: |
+        pip check  # Ensures that all dependencies are correctly installed and there are no conflicts
+
     - name: Run backend tests
       run: |
         pytest backend/tests
       env:
         PYTHONPATH: ./backend  # Makes sure Python can find your backend modules
 
-    # Ensure FastAPI can start (even if skeleton)
+    # Step 3: Ensure FastAPI can start (even if skeleton)
     - name: Start FastAPI Application (Testing API skeleton)
       run: |
         uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload &
-        sleep 10
+        sleep 15  # Increased sleep time to ensure FastAPI starts
         curl http://127.0.0.1:8000
 
-    # Frontend setup (Node.js)
+    # Step 4: Frontend setup (Node.js)
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '20'  # Or the version you are using
+        node-version: '20'  # Ensure node version matches your local environment
 
     - name: Install frontend dependencies
       run: |
@@ -62,3 +67,4 @@ jobs:
       run: |
         cd frontend
         npm test
+
