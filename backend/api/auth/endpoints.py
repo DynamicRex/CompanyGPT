@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Body, Depends
 from backend.utils.config import users_collection, ACCESS_TOKEN_EXPIRE_MINUTES
 from backend.utils.security import create_access_token, verify_token, hash_password, verify_password
+from backend.utils.logging import logger  # Import the logger
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import EmailStr, BaseModel
 from datetime import datetime, timedelta
@@ -15,11 +16,13 @@ router = APIRouter()
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     email = verify_token(token)
     if email is None:
+        logger.warning("Invalid or expired token used")
         raise HTTPException(status_code=401, detail="Invalid token or token expired")
     
     # Check if the user exists in the database
     user = await users_collection.find_one({"email": email})
     if not user:
+        logger.warning(f"Invalid token for non-existing user: {email}")
         raise HTTPException(status_code=401, detail="Invalid token")
     return user
 
@@ -31,6 +34,7 @@ async def signup(full_name: str = Body(...), email: EmailStr = Body(...), passwo
     # Check if the user already exists
     existing_user = await users_collection.find_one({"email": email})
     if existing_user:
+        logger.warning(f"Signup failed: User with email {email} already exists")
         raise HTTPException(status_code=400, detail="User with this email already exists.")
     
     # Hash the password
@@ -56,6 +60,7 @@ async def signup(full_name: str = Body(...), email: EmailStr = Body(...), passwo
 
     # Insert the superuser into MongoDB
     await users_collection.insert_one(superuser_data)
+    logger.info(f"Superuser account created for {email}")
 
     return {"message": "Superuser account created successfully", "user_id": superuser_id}
 
@@ -66,11 +71,13 @@ async def add_user(superuser_id: str = Body(...), full_name: str = Body(...),
     # Check if superuser exists (now handling superuser_id as a string, not ObjectId)
     superuser = await users_collection.find_one({"_id": superuser_id, "role": "superuser"})
     if not superuser:
+        logger.warning(f"Superuser with ID {superuser_id} not found")
         raise HTTPException(status_code=400, detail="Superuser not found.")
 
     # Check if the user already exists
     existing_user = await users_collection.find_one({"email": email})
     if existing_user:
+        logger.warning(f"User creation failed: Email {email} already exists")
         raise HTTPException(status_code=400, detail="User with this email already exists.")
 
     # Hash the password
@@ -92,6 +99,7 @@ async def add_user(superuser_id: str = Body(...), full_name: str = Body(...),
 
     # Insert the regular user into MongoDB
     await users_collection.insert_one(user_data)
+    logger.info(f"User account created for {email} by superuser {superuser_id}")
 
     return {"message": "User account created successfully", "user_id": str(user_data["_id"])}
 
@@ -101,10 +109,12 @@ async def login(email: EmailStr = Body(...), password: str = Body(...)):
     # Check if user exists
     user = await users_collection.find_one({"email": email})
     if not user:
+        logger.warning(f"Login failed: Invalid email {email}")
         raise HTTPException(status_code=400, detail="Invalid email or password")
     
     # Verify password
     if not verify_password(password, user["password_hash"]):
+        logger.warning(f"Login failed: Incorrect password for {email}")
         raise HTTPException(status_code=400, detail="Invalid email or password")
     
     # Create JWT token
@@ -113,11 +123,13 @@ async def login(email: EmailStr = Body(...), password: str = Body(...)):
         data={"sub": user["email"]}, expires_delta=access_token_expires
     )
     
+    logger.info(f"User {email} logged in successfully")
     return {"access_token": access_token, "token_type": "bearer"}
 
 # Protected Route Example
 @router.get("/protected-route")
 async def protected_route(current_user: dict = Depends(get_current_user)):
+    logger.info(f"Protected route accessed by {current_user['full_name']}")
     return {"message": f"Hello, {current_user['full_name']}. This is a protected route."}
 
 # Logout Endpoint (Client-side token removal)
@@ -127,6 +139,7 @@ async def logout(current_user: dict = Depends(get_current_user)):
     Logout simply invalidates the token on the client side.
     The client should remove the token from storage (e.g., local storage, cookies).
     """
+    logger.info(f"User {current_user['full_name']} logged out")
     return {"message": f"Goodbye, {current_user['full_name']}. Token should be removed client-side."}
 
 # Update Superuser Profile
@@ -145,6 +158,7 @@ async def update_superuser_profile(
 ):
     # Ensure the user is a superuser
     if current_user['role'] != "superuser":
+        logger.warning(f"Unauthorized attempt to update superuser profile by {current_user['email']}")
         raise HTTPException(status_code=403, detail="Only superusers can update this profile")
 
     update_data = {}
@@ -174,6 +188,7 @@ async def update_superuser_profile(
     if update_data:
         update_data["updated_at"] = datetime.utcnow()
         await users_collection.update_one({"_id": user_id}, {"$set": update_data})
+        logger.info(f"Superuser {current_user['email']} updated profile successfully")
         return {"message": "Superuser profile updated successfully"}
 
     return {"message": "No fields to update"}
@@ -190,6 +205,7 @@ async def update_user_profile(
 ):
     # Ensure the user is a regular user
     if current_user['role'] != "user":
+        logger.warning(f"Unauthorized attempt to update regular user profile by {current_user['email']}")
         raise HTTPException(status_code=403, detail="Only regular users can update this profile")
 
     update_data = {}
@@ -211,7 +227,7 @@ async def update_user_profile(
     if update_data:
         update_data["updated_at"] = datetime.utcnow()
         await users_collection.update_one({"_id": user_id}, {"$set": update_data})
+        logger.info(f"Regular user {current_user['email']} updated profile successfully")
         return {"message": "User profile updated successfully"}
 
     return {"message": "No fields to update"}
-

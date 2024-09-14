@@ -6,6 +6,7 @@ from backend.api.report.endpoints import router as report_router
 from backend.api.erp.endpoints import router as erp_router
 from backend.api.support.endpoints import router as support_router
 from backend.api.middleware import JWTAuthMiddleware
+from backend.utils.logging import logger  # Import the logger setup
 
 app = FastAPI()
 
@@ -21,8 +22,10 @@ app.include_router(support_router, prefix="/support", tags=["Support"])
 
 @app.get("/")
 def read_root():
+    logger.info("Root endpoint accessed")  # Log when root endpoint is accessed
     return {"message": "Welcome to CompanyGPT API"}
 
 if __name__ == "__main__":
     import uvicorn
+    logger.info("Starting the FastAPI application")  # Log when the app starts
     uvicorn.run(app, host="0.0.0.0", port=8000)
