@@ -58,13 +58,29 @@ jobs:
         cd frontend
         npm install
 
+    # Step 5: Linting for Frontend Code
     - name: Run ESLint
       run: |
         cd frontend
         npm run lint
 
+    # Step 6: Run Frontend Tests
     - name: Run frontend tests
       run: |
         cd frontend
         npm test
 
+    # Step 7: Build Frontend for Production
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+
+    # Step 8: Deploy to a static site host (optional)
+    # This step is optional and depends on your hosting solution for the frontend.
+    # Example: Deploying to GitHub Pages
+    # - name: Deploy to GitHub Pages
+    #   uses: peaceiris/actions-gh-pages@v3
+    #   with:
+    #     github_token: ${{ secrets.GITHUB_TOKEN }}
+    #     publish_dir: ./frontend/build
