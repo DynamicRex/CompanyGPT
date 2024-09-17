@@ -50,21 +50,14 @@ D:.
 │   ├───assets                 # Folder for all static assets (images, svgs, fonts).
 │   │   ├───images             # Images used in the app.
 │   │   │   ├── logo.svg       # Example logo image in SVG format.
-│   │   │   └── .gitkeep       # Placeholder file to ensure the directory is pushed to Git.
 │   │   └───svgs               # Any additional SVG files (if required).
-│   │       └── .gitkeep       # Placeholder file to ensure the directory is pushed to Git.
 │
 │   ├───components             # Atomic design components.
 │   │   ├───atoms              # Basic UI elements (e.g., buttons, inputs).
-│   │   │   └── .gitkeep       # Placeholder for atoms.
 │   │   ├───molecules          # Combinations of atoms (e.g., form fields, navbars).
-│   │   │   └── .gitkeep       # Placeholder for molecules.
 │   │   ├───organisms          # Larger building blocks (e.g., header, footer).
-│   │   │   └── .gitkeep       # Placeholder for organisms.
 │   │   ├───templates          # Page layouts that wrap organisms and other components.
-│   │   │   └── .gitkeep       # Placeholder for templates.
 │   │   └───pages              # Full pages (e.g., login, dashboard, signup).
-│   │       └── .gitkeep       # Placeholder for pages.
 │
 │   ├───hooks                  # Custom React hooks for specific functionality.
 │   │   └── useAuth.ts         # Example hook for handling authentication.
