@@ -29,11 +29,11 @@ const SignUp: React.FC = () => {
       <main className="flex-1 w-full max-w-2xl mt-24 mx-auto px-4">
         {/* Title */}
         <h1 className="text-center text-3xl font-bold text-gray-900 uppercase mb-10">
-          THE AI BRAIN FOR YOUR COMPANY
+          THE AI BRAIN FOR COMPANIES
         </h1>
         
        {/* Form */}
-       <form className="ml-16 w-full max-w-md space-y-6"> {/* Align form elements left */}
+       <form className="ml-24 w-full max-w-md space-y-6"> {/* Align form elements left */}
           <InputField
             type="text"
             label="Full Name"

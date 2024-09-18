@@ -1,12 +1,16 @@
 import React from 'react';
-import SignUp from './pages/SignUp'; // Import the SignUp component
-import './styles/global.css'; // Ensure the global styles are still applied
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import Router components
+import SignUp from './pages/SignUp';
+import SignIn from './pages/SignIn'; // Assuming you'll create a SignIn component
 
 function App() {
   return (
-    <div className="App">
-      <SignUp /> {/* Render the SignUp page */}
-    </div>
+    <Router> {/* Wrap everything inside Router */}
+      <Routes>
+        <Route path="/signup" element={<SignUp />} /> {/* Define the SignUp route */}
+        <Route path="/signin" element={<SignIn />} /> {/* Define the SignIn route */}
+      </Routes>
+    </Router>
   );
 }
 
