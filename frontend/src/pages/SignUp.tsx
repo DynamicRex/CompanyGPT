@@ -5,6 +5,14 @@ import InputField from '../components/common/InputField';
 import Dropdown from '../components/common/Dropdown';
 import Button from '../components/common/Button';
 
+// Function to capitalize the first letter of each word but leave other characters as typed
+const capitalizeFirstLetter = (text: string) => {
+    return text
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Only capitalize the first letter of each word
+      .join(' ');
+  };
+
 const SignUp: React.FC = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -16,19 +24,22 @@ const SignUp: React.FC = () => {
   const [employeesCount, setEmployeesCount] = useState('');
 
   return (
-    <div className="bg-gray-50 min-h-screen flex flex-col items-center">
+    <div className="bg-gray-50 min-h-screen flex flex-col">
       <Header showSignInButton={true} />
-      <main className="w-full max-w-lg mt-10 bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-center text-2xl font-bold mb-6 text-gray-800">
-          The AI Brain for Your Company
+      <main className="flex-1 w-full max-w-2xl mt-24 mx-auto px-4">
+        {/* Title */}
+        <h1 className="text-center text-3xl font-bold text-gray-900 uppercase mb-10">
+          THE AI BRAIN FOR YOUR COMPANY
         </h1>
-        <form className="space-y-6">
+        
+       {/* Form */}
+       <form className="ml-16 w-full max-w-md space-y-6"> {/* Align form elements left */}
           <InputField
             type="text"
             label="Full Name"
             placeholder="John Doe"
             value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
+            onChange={(e) => setFullName(capitalizeFirstLetter(e.target.value))}
           />
           <InputField
             type="email"
@@ -40,14 +51,14 @@ const SignUp: React.FC = () => {
           <InputField
             type="password"
             label="Password"
-            placeholder="Enter password"
+            placeholder="Enter Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <InputField
             type="password"
             label="Confirm Password"
-            placeholder="Confirm password"
+            placeholder="Confirm Password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
@@ -56,20 +67,21 @@ const SignUp: React.FC = () => {
             label="Company Name"
             placeholder="Acme Inc"
             value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
+            onChange={(e) => setCompanyName(capitalizeFirstLetter(e.target.value))}
           />
           <InputField
             type="text"
             label="Company Address"
             placeholder="123 Main St, San Francisco, CA"
             value={companyAddress}
-            onChange={(e) => setCompanyAddress(e.target.value)}
+            onChange={(e) => setCompanyAddress(capitalizeFirstLetter(e.target.value))}
           />
-          <Dropdown
+          <InputField
+            type="text"
             label="Industry Type"
-            options={['Technology', 'Finance', 'Healthcare']}
+            placeholder="Technology, Finance, etc."
             value={industryType}
-            onChange={(e) => setIndustryType(e.target.value)}
+            onChange={(e) => setIndustryType(capitalizeFirstLetter(e.target.value))}
           />
           <Dropdown
             label="Number of Employees"

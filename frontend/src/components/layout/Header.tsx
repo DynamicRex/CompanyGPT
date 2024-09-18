@@ -10,7 +10,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ showSignInButton }) => {
   return (
-    <header className="w-full fixed top-0 bg-white shadow-sm border-b border-gray-200 z-50">
+    <header className="w-full fixed top-0 bg-white border-b border-gray-200 z-50">
       <div className="w-full px-2 py-2 flex justify-between items-center">
         <div className="flex items-center">
           <Logo />

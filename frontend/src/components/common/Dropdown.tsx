@@ -9,12 +9,12 @@ interface DropdownProps {
 
 const Dropdown: React.FC<DropdownProps> = ({ label, options, value, onChange }) => {
   return (
-    <div>
-      <label className="block text-gray-700 mb-2">{label}</label>
+    <div className="w-full max-w-lg">
+      <label className="block text-gray-700 text-sm font-semibold mb-2">{label}</label>
       <select
         value={value}
         onChange={onChange}
-        className="w-full p-3 border border-gray-300 rounded-md"
+        className="w-full p-4 border border-gray-100 rounded-xl bg-gray-200"
       >
         <option value="" disabled>
           Select
