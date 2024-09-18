@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './styles/global.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Add react-router
+import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
@@ -12,11 +12,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Router>
-      <Routes>
-        <Route path="/" element={<App />} />
-        {/* Add other routes here, for example: */}
-        {/* <Route path="/login" element={<Login />} /> */}
-      </Routes>
+      <App /> {/* No need to add Routes here, they are defined inside App */}
     </Router>
   </React.StrictMode>
 );

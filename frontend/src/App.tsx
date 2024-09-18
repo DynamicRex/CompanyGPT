@@ -1,16 +1,14 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import Router components
+import { Route, Routes } from 'react-router-dom'; // Remove BrowserRouter, keep Routes
 import SignUp from './pages/SignUp';
-import SignIn from './pages/SignIn'; // Assuming you'll create a SignIn component
+import SignIn from './pages/SignIn';
 
 function App() {
   return (
-    <Router> {/* Wrap everything inside Router */}
-      <Routes>
-        <Route path="/signup" element={<SignUp />} /> {/* Define the SignUp route */}
-        <Route path="/signin" element={<SignIn />} /> {/* Define the SignIn route */}
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/signin" element={<SignIn />} />
+    </Routes>
   );
 }
 
