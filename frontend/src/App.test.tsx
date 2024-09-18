@@ -8,8 +8,8 @@ test('renders the signup form', () => {
       <App />
     </MemoryRouter>
   );
-  
-  // Replace the outdated "learn react" with text that actually exists in your app
-  const headingElement = screen.getByText(/the ai brain for your company/i); 
+
+  // Replace the text to match the actual heading
+  const headingElement = screen.getByText(/the ai brain for companies/i); 
   expect(headingElement).toBeInTheDocument();
 });
