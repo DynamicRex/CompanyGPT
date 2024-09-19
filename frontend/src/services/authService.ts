@@ -5,7 +5,7 @@ const API_URL = 'http://localhost:8000'; // Replace with your backend URL
 // Sign-Up
 const signup = async (userData: { full_name: string; email: string; password: string; company_name: string; company_address: string; industry_type: string; number_of_employees: number }) => {
   try {
-    return await axios.post(`${API_URL}/auth/signup`, userData);
+    return await axios.post(`${API_URL}/auth/signup`, userData);  // Use proper string interpolation
   } catch (error: any) {
     return Promise.reject(error.response?.data || 'Sign-up failed');
   }

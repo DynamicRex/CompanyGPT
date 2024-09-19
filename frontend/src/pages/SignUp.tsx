@@ -4,14 +4,7 @@ import Footer from '../components/layout/Footer';
 import InputField from '../components/common/InputField';
 import Dropdown from '../components/common/Dropdown';
 import Button from '../components/common/Button';
-
-// Function to capitalize the first letter of each word but leave other characters as typed
-const capitalizeFirstLetter = (text: string) => {
-    return text
-      .split(' ')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Only capitalize the first letter of each word
-      .join(' ');
-  };
+import { signup } from '../services/authService'; // Import signup function from authServices
 
 const SignUp: React.FC = () => {
   const [fullName, setFullName] = useState('');
@@ -21,7 +14,94 @@ const SignUp: React.FC = () => {
   const [companyName, setCompanyName] = useState('');
   const [companyAddress, setCompanyAddress] = useState('');
   const [industryType, setIndustryType] = useState('');
-  const [employeesCount, setEmployeesCount] = useState('');
+  const [employeesCount, setEmployeesCount] = useState(''); // Keep it as string
+  const [error, setError] = useState<string | null>(null); // Error state for validation or backend errors
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+
+  // Function to capitalize the first letter of each word but leave other characters as typed
+  const capitalizeFirstLetter = (text: string) => {
+    return text
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Only capitalize the first letter of each word
+      .join(' ');
+  };
+
+  // Form validation
+  const validateForm = (): boolean => {
+    if (!fullName || !email || !password || !confirmPassword || !companyName || !companyAddress || !industryType || !employeesCount) {
+      setError('All fields are required.');
+      return false;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return false;
+    }
+    // Simple email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Invalid email format.');
+      return false;
+    }
+    return true;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null); // Reset any previous errors
+
+    // Validate the form before sending
+    if (!validateForm()) {
+      return;
+    }
+
+    // Handle employeesCount conversion based on string input
+    let numberOfEmployees = 0;
+    switch (employeesCount) {
+      case '1-10':
+        numberOfEmployees = 10;
+        break;
+      case '11-50':
+        numberOfEmployees = 50;
+        break;
+      case '51-200':
+        numberOfEmployees = 200;
+        break;
+      case '200+':
+        numberOfEmployees = 200; // You can decide a value for "200+" here
+        break;
+      default:
+        numberOfEmployees = 0;
+    }
+
+    const formData = {
+      full_name: fullName,
+      email,
+      password,
+      company_name: companyName,
+      company_address: companyAddress,
+      industry_type: industryType,
+      number_of_employees: numberOfEmployees,
+    };
+
+    // Log form data to the console before submitting
+    console.log("Form Data: ", formData);
+
+    setIsLoading(true); // Set loading state
+
+    try {
+      // Send data to the backend
+      await signup(formData);
+      // Redirect or show success message
+      alert('Signup successful! Redirecting to login...');
+      // Redirect to login or other page here
+      // e.g., navigate('/login');
+    } catch (error: any) {
+      setError(error?.message || 'Signup failed');
+    } finally {
+      setIsLoading(false); // Reset loading state
+    }
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
@@ -31,9 +111,9 @@ const SignUp: React.FC = () => {
         <h1 className="text-center text-3xl font-bold text-gray-900 uppercase mb-10">
           THE AI BRAIN FOR COMPANIES
         </h1>
-        
-       {/* Form */}
-       <form className="ml-24 w-full max-w-md space-y-6"> {/* Align form elements left */}
+
+        {/* Form */}
+        <form className="ml-24 w-full max-w-md space-y-6" onSubmit={handleSubmit}>
           <InputField
             type="text"
             label="Full Name"
@@ -87,9 +167,14 @@ const SignUp: React.FC = () => {
             label="Number of Employees"
             options={['1-10', '11-50', '51-200', '200+']}
             value={employeesCount}
-            onChange={(e) => setEmployeesCount(e.target.value)}
+            onChange={(e) => setEmployeesCount(e.target.value)} // Handle as string and convert later
           />
-          <Button text="Submit" onClick={() => {}} />
+
+          {/* Display error if exists */}
+          {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+
+          {/* Submit Button */}
+          <Button text={isLoading ? 'Submitting...' : 'Submit'} onClick={() => {}} disabled={isLoading} />
         </form>
       </main>
       <Footer />

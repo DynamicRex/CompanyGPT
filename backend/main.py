@@ -1,5 +1,7 @@
 # backend/main.py
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware  # Import CORS middleware
+
 from backend.api.auth.endpoints import router as auth_router
 from backend.api.query.endpoints import router as query_router
 from backend.api.report.endpoints import router as report_router
@@ -9,6 +11,15 @@ from backend.api.middleware import JWTAuthMiddleware
 from backend.utils.logging import logger  # Import the logger setup
 
 app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Frontend origin
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
 
 # Add JWT Authentication Middleware
 app.add_middleware(JWTAuthMiddleware)
