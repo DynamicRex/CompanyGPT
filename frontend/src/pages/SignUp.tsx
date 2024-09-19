@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import InputField from '../components/common/InputField';
@@ -17,6 +18,8 @@ const SignUp: React.FC = () => {
   const [employeesCount, setEmployeesCount] = useState(''); // Keep it as string
   const [error, setError] = useState<string | null>(null); // Error state for validation or backend errors
   const [isLoading, setIsLoading] = useState(false); // Loading state
+
+  const navigate = useNavigate(); // Use navigate for redirection
 
   // Function to capitalize the first letter of each word but leave other characters as typed
   const capitalizeFirstLetter = (text: string) => {
@@ -94,8 +97,7 @@ const SignUp: React.FC = () => {
       await signup(formData);
       // Redirect or show success message
       alert('Signup successful! Redirecting to login...');
-      // Redirect to login or other page here
-      // e.g., navigate('/login');
+      navigate('/login'); // Redirect to login page after success
     } catch (error: any) {
       setError(error?.message || 'Signup failed');
     } finally {
@@ -105,7 +107,7 @@ const SignUp: React.FC = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
-      <Header showSignInButton={true} />
+      <Header showLoginButton={true} />
       <main className="flex-1 w-full max-w-2xl mt-24 mx-auto px-4">
         {/* Title */}
         <h1 className="text-center text-3xl font-bold text-gray-900 uppercase mb-10">
