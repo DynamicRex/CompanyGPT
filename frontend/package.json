@@ -58,19 +58,11 @@
     "prettier": "^3.3.3",
     "tailwindcss": "^3.4.11"
   },
-  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
-  "main": "postcss.config.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "jsdom",
     "transform": {
       "^.+\\.(ts|tsx)$": "ts-jest",
       "^.+\\.jsx?$": "babel-jest"
     },
-    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
     "transformIgnorePatterns": [
       "/node_modules/(?!axios)/"
     ],
