@@ -1,16 +1,20 @@
 import os
+from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson.objectid import ObjectId
 from datetime import timedelta
 
+# Load environment variables from .env file
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
+
 # Existing configuration
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
+DATABASE_URL = os.getenv("DATABASE_URL")
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"  # HMAC SHA-256 algorithm for JWT
-ACCESS_TOKEN_EXPIRE_MINUTES = 30  # Token expiry time
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 # MongoDB connection
-MONGO_DETAILS = "mongodb+srv://visionroots0:OqGvDWGoEhosMs6L@companygpt.ls74t.mongodb.net/?retryWrites=true&w=majority&appName=CompanyGPT"
+MONGO_DETAILS = os.getenv("MONGO_DETAILS")
 client = AsyncIOMotorClient(MONGO_DETAILS)
 database = client["CompanyGPT"]
 users_collection = database.get_collection("users")
