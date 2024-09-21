@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import Header from '../components/layout/Header';
+import { HeaderSignUp } from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import InputField from '../components/common/InputField';
 import Dropdown from '../components/common/Dropdown';
@@ -107,7 +107,7 @@ const SignUp: React.FC = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
-      <Header showLoginButton={true} />
+      <HeaderSignUp showLoginButton={true} />
       <main className="flex-1 w-full max-w-2xl mt-24 mx-auto px-4">
         {/* Title */}
         <h1 className="text-center text-3xl font-bold text-gray-900 uppercase mb-10">
