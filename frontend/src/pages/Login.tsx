@@ -1,38 +1,54 @@
 // frontend/src/pages/Login.tsx
 
 import React, { useState } from 'react';
-import { HeaderLogin } from '../components/layout/Header'; // Import the Login Header
+import { useNavigate } from 'react-router-dom'; // For redirection
+import { HeaderLogin } from '../components/layout/Header';
 import InputField from '../components/common/InputField';
 import Button from '../components/common/Button';
+import { login } from '../services/authService'; // Import login function
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false); // State for Remember Me checkbox
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState<string | null>(null); // State for error handling
+  const [isLoading, setIsLoading] = useState(false); // Loading state
 
-  // Handle form submission (for now, we'll just log the data)
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({
-      email,
-      password,
-      rememberMe
-    });
-    // We will handle the actual submission logic later when connecting to the backend
+    setIsLoading(true); // Set loading state
+
+    try {
+      const response = await login({ email, password }); // Call the login service
+      const { access_token, role } = response.data;
+
+      // Store JWT token
+      localStorage.setItem('token', access_token);
+
+      // Redirect based on role
+      if (role === 'superuser') {
+        navigate('/dashboard/superuser');
+      } else if (role === 'user') {
+        navigate('/dashboard/user');
+      }
+    } catch (err: any) {
+      setError(err?.detail || 'Login failed'); // Display backend error message
+    } finally {
+      setIsLoading(false); // Reset loading state
+    }
   };
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
-      <HeaderLogin showSignUpButton={true} /> {/* Use the Login Header */}
+      <HeaderLogin showSignUpButton={true} />
       <main className="flex-1 w-full max-w-2xl mt-24 mx-auto px-4">
-        {/* Title */}
         <h1 className="text-center text-3xl font-bold text-gray-900 uppercase mb-10">
           Welcome Back to CompanyGPT
         </h1>
 
-        {/* Form */}
         <form className="ml-24 w-full max-w-md space-y-6" onSubmit={handleSubmit}>
-          {/* Email Field */}
           <InputField
             type="email"
             label="Email ID"
@@ -41,7 +57,6 @@ const Login: React.FC = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
 
-          {/* Password Field */}
           <InputField
             type="password"
             label="Password"
@@ -50,13 +65,12 @@ const Login: React.FC = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          {/* Remember Me Checkbox */}
           <div className="flex items-center">
             <input
               id="remember-me"
               name="remember-me"
               type="checkbox"
-              className="h-4 w-4 text-blue-600 focus:ring-[#5c50f7] border-gray-300 rounded"
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
             />
@@ -65,20 +79,19 @@ const Login: React.FC = () => {
             </label>
           </div>
 
-          {/* Forgot Password Link */}
           <div className="text-sm">
-            <a href="/forgot-password" className="font-medium text-[#5c50f7] hover:text-blue-500">
+            <a href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
               Forgot Your Password?
             </a>
           </div>
 
-          {/* Log In Button */}
-          <Button text="Log In" onClick={() => handleSubmit} />
+          {error && <div className="text-red-500 text-sm">{error}</div>}
 
-          {/* Create Account Link */}
+          <Button text={isLoading ? 'Logging In...' : 'Log In'} onClick={() => handleSubmit} disabled={isLoading} />
+
           <div className="text-sm text-center mt-4">
             <span>Don't have an account? </span>
-            <a href="/signup" className="font-medium text-[#5c50f7] hover:text-blue-500">
+            <a href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
               Create an Account
             </a>
           </div>

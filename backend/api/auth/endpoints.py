@@ -124,7 +124,11 @@ async def login(email: EmailStr = Body(...), password: str = Body(...)):
     )
     
     logger.info(f"User {email} logged in successfully")
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token, 
+        "token_type": "bearer",
+        "role": user["role"]  # Include role in the response
+    }
 
 # Protected Route Example
 @router.get("/protected-route")
