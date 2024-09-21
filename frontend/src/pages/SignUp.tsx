@@ -71,7 +71,7 @@ const SignUp: React.FC = () => {
         numberOfEmployees = 200;
         break;
       case '200+':
-        numberOfEmployees = 200; // You can decide a value for "200+" here
+        numberOfEmployees = 500; // You can decide a value for "200+" here
         break;
       default:
         numberOfEmployees = 0;
@@ -95,8 +95,8 @@ const SignUp: React.FC = () => {
     try {
       // Send data to the backend
       await signup(formData);
-      // Redirect or show success message
-      alert('Signup successful! Redirecting to login...');
+
+      // Redirect to login page automatically after successful sign-up
       navigate('/login'); // Redirect to login page after success
     } catch (error: any) {
       setError(error?.message || 'Signup failed');
