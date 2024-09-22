@@ -11,6 +11,12 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import store from './stores';
 
+// Import the utility to load auth from localStorage
+import { loadAuthFromLocalStorage } from './utils/auth';
+
+// Load authentication state from localStorage (repopulating Redux)
+loadAuthFromLocalStorage(); // This ensures Redux state is populated with token if available
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

@@ -25,16 +25,18 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       state.role = action.payload.role;
       state.isAuthenticated = true;
-      // Store the token in localStorage for persistence
+      // Store the token and role in localStorage for persistence
       localStorage.setItem('token', action.payload.token);
+      localStorage.setItem('role', action.payload.role); // Add role to localStorage
     },
     // Action to log the user out
     logout: (state) => {
       state.token = null;
       state.role = null;
       state.isAuthenticated = false;
-      // Remove the token from localStorage
+      // Remove token and role from localStorage
       localStorage.removeItem('token');
+      localStorage.removeItem('role');
     },
   },
 });
