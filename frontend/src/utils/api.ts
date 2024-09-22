@@ -1,4 +1,7 @@
+// src/utils/api.ts
+
 import axios from 'axios';
+import store from '../stores'; // Import Redux store
 
 const API_URL = 'http://localhost:8000'; // Your backend URL
 
@@ -10,9 +13,11 @@ const api = axios.create({
 // Axios Interceptor to attach the JWT token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const state = store.getState(); // Get the current state from Redux
+    const token = state.auth.token; // Get the JWT token from Redux
+
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;  // Fix the token attachment
+      config.headers.Authorization = `Bearer ${token}`;  
     }
     return config;
   },

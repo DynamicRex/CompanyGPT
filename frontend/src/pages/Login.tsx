@@ -5,7 +5,9 @@ import { useNavigate } from 'react-router-dom'; // For redirection
 import { HeaderLogin } from '../components/layout/Header';
 import InputField from '../components/common/InputField';
 import Button from '../components/common/Button';
-import { login } from '../services/authService'; // Import login function
+import { login as loginAPI } from '../services/authService'; // API call
+import { useDispatch } from 'react-redux'; // Import useDispatch
+import { login } from '../stores/authSlice'; // Import Redux action
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -15,17 +17,18 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false); // Loading state
 
   const navigate = useNavigate();
+  const dispatch = useDispatch(); // Set up Redux dispatch
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true); // Set loading state
 
     try {
-      const response = await login({ email, password }); // Call the login service
+      const response = await loginAPI({ email, password }); // Call the login service
       const { access_token, role } = response.data;
 
-      // Store JWT token
-      localStorage.setItem('token', access_token);
+      // Dispatch login action to store token and role in Redux store
+      dispatch(login({ token: access_token, role }));
 
       // Redirect based on role
       if (role === 'superuser') {

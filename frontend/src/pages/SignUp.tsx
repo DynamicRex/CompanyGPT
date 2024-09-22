@@ -5,7 +5,9 @@ import Footer from '../components/layout/Footer';
 import InputField from '../components/common/InputField';
 import Dropdown from '../components/common/Dropdown';
 import Button from '../components/common/Button';
-import { signup } from '../services/authService'; // Import signup function from authServices
+import { signup, login as loginAPI } from '../services/authService'; // Import both signup and login functions
+import { useDispatch } from 'react-redux'; // Import useDispatch
+import { login } from '../stores/authSlice'; // Import Redux action
 
 const SignUp: React.FC = () => {
   const [fullName, setFullName] = useState('');
@@ -20,6 +22,7 @@ const SignUp: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false); // Loading state
 
   const navigate = useNavigate(); // Use navigate for redirection
+  const dispatch = useDispatch(); // Set up Redux dispatch
 
   // Function to capitalize the first letter of each word but leave other characters as typed
   const capitalizeFirstLetter = (text: string) => {
@@ -96,8 +99,16 @@ const SignUp: React.FC = () => {
       // Send data to the backend
       await signup(formData);
 
-      // Redirect to login page automatically after successful sign-up
-      navigate('/login'); // Redirect to login page after success
+      // After successful sign-up, log the user in automatically
+      const response = await loginAPI({ email, password });
+      const { access_token } = response.data;
+
+      // Dispatch login action to store token and role in Redux store
+      dispatch(login({ token: access_token, role: 'superuser' })); // Role is always superuser in the sign-up flow
+
+      // Redirect to the superuser dashboard
+      navigate('/dashboard/superuser');
+
     } catch (error: any) {
       setError(error?.message || 'Signup failed');
     } finally {
@@ -171,7 +182,7 @@ const SignUp: React.FC = () => {
             value={employeesCount}
             onChange={(e) => setEmployeesCount(e.target.value)} // Handle as string and convert later
           />
-
+         
           {/* Display error if exists */}
           {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
 
