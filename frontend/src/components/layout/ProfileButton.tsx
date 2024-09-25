@@ -29,7 +29,7 @@ const SuperuserProfileButton: React.FC = () => {
           <ul className="py-2">
             <li>
               <Link
-                to="/settings"
+                to="/settings/superuser" // Updated link to Superuser settings page
                 className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-t-xl transition-all duration-200 ease-in-out"
               >
                 Settings

@@ -6,7 +6,7 @@ import SignUp from './pages/SignUp';
 import Login from './pages/Login';
 import SuperuserDashboard from './pages/SuperuserDashboard';
 import UserDashboard from './pages/UserDashboard';
-import Settings from './pages/Settings'; // Import the Settings page
+import SuperuserSettings from './pages/SuperuserSettings'; // Updated import for SuperuserSettings
 import Billing from './pages/Billing'; // Import the Billing page
 import ERPConnections from './pages/ERPConnections'; // Import ERP Connections page
 import ManageProfiles from './pages/ManageProfiles'; // Import Manage Profiles page
@@ -18,7 +18,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/dashboard/superuser" element={<SuperuserDashboard />} />
       <Route path="/dashboard/user" element={<UserDashboard />} />
-      <Route path="/settings" element={<Settings />} />
+      <Route path="/settings/superuser" element={<SuperuserSettings />} /> {/* Superuser settings route */}
       <Route path="/billing" element={<Billing />} />
       <Route path="/erp-connections" element={<ERPConnections />} />
       <Route path="/manage-profiles" element={<ManageProfiles />} />
