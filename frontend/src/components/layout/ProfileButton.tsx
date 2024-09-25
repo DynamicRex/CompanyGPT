@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import profileIcon from '../../assets/images/profiles button.png'; // Profile icon path
 
-const ProfileButton: React.FC = () => {
+// Renamed const for the Superuser profile button
+const SuperuserProfileButton: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -73,4 +74,4 @@ const ProfileButton: React.FC = () => {
   );
 };
 
-export default ProfileButton;
+export default SuperuserProfileButton;

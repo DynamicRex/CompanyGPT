@@ -3,7 +3,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '../common/Logo';
-import ProfileButton from './ProfileButton'; // Import the profile button component
+import SuperuserProfileButton from './ProfileButton'; // Import the Superuser profile button from ProfileButton
 
 // Common HeaderProps interface for both headers
 interface HeaderProps {
@@ -70,16 +70,15 @@ export const HeaderSuperuser: React.FC = () => {
           <button className="text-black font-semibold px-3 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 mr-4">
             ADD PROFILES
           </button>
-          {/* Profile Button */}
+          {/* Superuser Profile Button */}
           <div className="mt-2">
-            <ProfileButton />
+            <SuperuserProfileButton />
           </div>
         </div>
       </div>
     </header>
   );
 };
-
 
 // Header component for User Dashboard (without login button)
 export const HeaderUser: React.FC = () => {
