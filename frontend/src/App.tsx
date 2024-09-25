@@ -1,19 +1,27 @@
-// src/App.tsx
+// frontend/src/App.tsx
 
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
-import SuperuserDashboard from './pages/SuperuserDashboard'; // Import Superuser Dashboard
-import UserDashboard from './pages/UserDashboard'; // Import User Dashboard
+import SuperuserDashboard from './pages/SuperuserDashboard';
+import UserDashboard from './pages/UserDashboard';
+import Settings from './pages/Settings'; // Import the Settings page
+import Billing from './pages/Billing'; // Import the Billing page
+import ERPConnections from './pages/ERPConnections'; // Import ERP Connections page
+import ManageProfiles from './pages/ManageProfiles'; // Import Manage Profiles page
 
 function App() {
   return (
     <Routes>
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/dashboard/superuser" element={<SuperuserDashboard />} /> {/* Superuser Dashboard */}
-      <Route path="/dashboard/user" element={<UserDashboard />} /> {/* User Dashboard */}
+      <Route path="/dashboard/superuser" element={<SuperuserDashboard />} />
+      <Route path="/dashboard/user" element={<UserDashboard />} />
+      <Route path="/settings" element={<Settings />} />
+      <Route path="/billing" element={<Billing />} />
+      <Route path="/erp-connections" element={<ERPConnections />} />
+      <Route path="/manage-profiles" element={<ManageProfiles />} />
       <Route path="/" element={<Navigate to="/signup" />} /> {/* Redirect from / to /signup */}
     </Routes>
   );
