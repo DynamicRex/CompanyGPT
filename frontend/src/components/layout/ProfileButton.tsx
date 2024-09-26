@@ -4,16 +4,17 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import profileIcon from '../../assets/images/profiles button.png'; // Profile icon path
 
-// Renamed const for the Superuser profile button
+// Common handleLogout function
+const handleLogout = (navigate: any) => {
+  // Dispatch the logout action here, e.g., using Redux
+  // Add your logout logic here (e.g., clearing state or tokens)
+  navigate('/login'); // Redirect to login after logout
+};
+
+// Superuser profile button
 const SuperuserProfileButton: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    // Dispatch the logout action here, e.g., using Redux
-    // Add your logout logic here (e.g., clearing state or tokens)
-    navigate('/login'); // Redirect to login after logout
-  };
 
   return (
     <div className="relative">
@@ -61,7 +62,7 @@ const SuperuserProfileButton: React.FC = () => {
             </li>
             <li>
               <button
-                onClick={handleLogout}
+                onClick={() => handleLogout(navigate)}
                 className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-b-xl transition-all duration-200 ease-in-out"
               >
                 Log Out
@@ -78,12 +79,6 @@ const SuperuserProfileButton: React.FC = () => {
 const UserProfileButton: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    // Dispatch the logout action here, e.g., using Redux
-    // Add your logout logic here (e.g., clearing state or tokens)
-    navigate('/login'); // Redirect to login after logout
-  };
 
   return (
     <div className="relative">
@@ -115,7 +110,7 @@ const UserProfileButton: React.FC = () => {
             </li>
             <li>
               <button
-                onClick={handleLogout}
+                onClick={() => handleLogout(navigate)}
                 className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-b-xl transition-all duration-200 ease-in-out"
               >
                 Log Out
