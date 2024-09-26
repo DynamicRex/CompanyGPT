@@ -3,7 +3,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '../common/Logo';
-import SuperuserProfileButton from './ProfileButton'; // Import the Superuser profile button from ProfileButton
+import { SuperuserProfileButton, UserProfileButton } from './ProfileButton'; // Import both profile buttons
 
 // Common HeaderProps interface for both headers
 interface HeaderProps {
@@ -88,6 +88,12 @@ export const HeaderUser: React.FC = () => {
         <div className="flex items-center">
           <Logo />
           <span className="ml-0 text-lg font-semibold text-gray-900">CompanyGPT</span>
+        </div>
+        <div className="flex items-center ml-auto mr-5">
+          {/* User Profile Button */}
+          <div className="mt-2">
+            <UserProfileButton />
+          </div>
         </div>
       </div>
     </header>

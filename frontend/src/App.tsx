@@ -10,6 +10,8 @@ import SuperuserSettings from './pages/SuperuserSettings'; // Updated import for
 import Billing from './pages/Billing'; // Import the Billing page
 import ERPConnections from './pages/ERPConnections'; // Import ERP Connections page
 import ManageProfiles from './pages/ManageProfiles'; // Import Manage Profiles page
+import UserFAQs from './pages/UserFAQs'; // Import the User FAQs page
+import UserSettings from './pages/UserSettings'; // Import the User Settings page
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
       <Route path="/dashboard/superuser" element={<SuperuserDashboard />} />
       <Route path="/dashboard/user" element={<UserDashboard />} />
       <Route path="/settings/superuser" element={<SuperuserSettings />} /> {/* Superuser settings route */}
+      <Route path="/settings/user" element={<UserSettings />} /> {/* User settings route */}
+      <Route path="/faqs" element={<UserFAQs />} /> {/* User FAQs route */}
       <Route path="/billing" element={<Billing />} />
       <Route path="/erp-connections" element={<ERPConnections />} />
       <Route path="/manage-profiles" element={<ManageProfiles />} />
