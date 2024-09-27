@@ -34,10 +34,14 @@ jobs:
       run: |
         pip check  # Ensures that all dependencies are correctly installed and there are no conflicts
 
+    # Add environment variables here for MongoDB, JWT, etc.
     - name: Run backend tests
       run: |
         pytest backend/tests
       env:
+        MONGO_DETAILS: ${{ secrets.MONGO_DETAILS }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
         PYTHONPATH: ./backend  # Makes sure Python can find your backend modules
 
     # Step 3: Ensure FastAPI can start (even if skeleton)
@@ -46,6 +50,10 @@ jobs:
         uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload &
         sleep 15  # Increased sleep time to ensure FastAPI starts
         curl http://127.0.0.1:8000
+      env:
+        MONGO_DETAILS: ${{ secrets.MONGO_DETAILS }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
 
     # Step 4: Frontend setup (Node.js)
     - name: Set up Node.js
