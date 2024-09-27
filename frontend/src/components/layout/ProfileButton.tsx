@@ -2,12 +2,14 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux'; // Import useDispatch
+import { logout } from '../../stores/authSlice'; // Import logout action from Redux
 import profileIcon from '../../assets/images/profiles button.png'; // Profile icon path
 
 // Common handleLogout function
-const handleLogout = (navigate: any) => {
-  // Dispatch the logout action here, e.g., using Redux
-  // Add your logout logic here (e.g., clearing state or tokens)
+const handleLogout = (dispatch: any, navigate: any) => {
+  // Dispatch the logout action
+  dispatch(logout()); // Clear Redux state and localStorage
   navigate('/login'); // Redirect to login after logout
 };
 
@@ -15,6 +17,7 @@ const handleLogout = (navigate: any) => {
 const SuperuserProfileButton: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch(); // Initialize dispatch
 
   return (
     <div className="relative">
@@ -62,7 +65,7 @@ const SuperuserProfileButton: React.FC = () => {
             </li>
             <li>
               <button
-                onClick={() => handleLogout(navigate)}
+                onClick={() => handleLogout(dispatch, navigate)} // Call handleLogout
                 className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-b-xl transition-all duration-200 ease-in-out"
               >
                 Log Out
@@ -79,6 +82,7 @@ const SuperuserProfileButton: React.FC = () => {
 const UserProfileButton: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch(); // Initialize dispatch
 
   return (
     <div className="relative">
@@ -110,7 +114,7 @@ const UserProfileButton: React.FC = () => {
             </li>
             <li>
               <button
-                onClick={() => handleLogout(navigate)}
+                onClick={() => handleLogout(dispatch, navigate)} // Call handleLogout
                 className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-b-xl transition-all duration-200 ease-in-out"
               >
                 Log Out
