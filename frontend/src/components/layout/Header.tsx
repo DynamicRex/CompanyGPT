@@ -1,8 +1,9 @@
 // frontend/src/components/layout/Header.tsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '../common/Logo';
+import AddProfileModal from '../modals/AddProfileModal'; // Import the AddProfileModal component
 import { SuperuserProfileButton, UserProfileButton } from './ProfileButton'; // Import both profile buttons
 
 // Common HeaderProps interface for both headers
@@ -58,6 +59,23 @@ export const HeaderLogin: React.FC<HeaderProps> = ({ showSignUpButton }) => {
 
 // Header component for Superuser Dashboard (without login button)
 export const HeaderSuperuser: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Close the modal
+  };
+
+  const handleAddProfile = (formData: { name: string; email: string; password: string }) => {
+    // Handle the form submission logic here (e.g., call the backend API to add the profile)
+    console.log("Adding profile:", formData);
+    // Close the modal after form submission
+    setIsModalOpen(false);
+  };
+
   return (
     <header className={headerStyle}>
       <div className="w-full px-2 py-2 flex justify-between items-center">
@@ -67,7 +85,10 @@ export const HeaderSuperuser: React.FC = () => {
         </div>
         <div className="flex items-center ml-auto mr-5">
           {/* Add Profiles Button */}
-          <button className="text-black font-semibold px-3 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 mr-4">
+          <button
+            className="text-black font-semibold px-3 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 mr-4"
+            onClick={handleOpenModal} // Open the modal when clicked
+          >
             ADD PROFILES
           </button>
           {/* Superuser Profile Button */}
@@ -76,6 +97,12 @@ export const HeaderSuperuser: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* AddProfileModal Component */}
+      <AddProfileModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal} // Close modal handler
+        onSubmit={handleAddProfile} // Submit handler for the modal form
+      />
     </header>
   );
 };
