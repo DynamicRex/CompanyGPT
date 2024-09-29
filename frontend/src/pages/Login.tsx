@@ -25,10 +25,10 @@ const Login: React.FC = () => {
 
     try {
       const response = await loginAPI({ email, password }); // Call the login service
-      const { access_token, role } = response.data;
+      const { access_token, role, user_id } = response.data; // <-- Ensure the backend is sending user_id
 
-      // Dispatch login action to store token and role in Redux store
-      dispatch(login({ token: access_token, role }));
+      // Dispatch login action to store token, role, and userId in Redux store
+      dispatch(login({ token: access_token, role, userId: user_id })); // <-- Include user_id here
 
       // Redirect based on role
       if (role === 'superuser') {
@@ -90,7 +90,7 @@ const Login: React.FC = () => {
 
           {error && <div className="text-red-500 text-sm">{error}</div>}
 
-          <Button text={isLoading ? 'Logging In...' : 'Log In'} onClick={() => handleSubmit} disabled={isLoading} />
+          <Button text={isLoading ? 'Logging In...' : 'Log In'} onClick={() => {}} disabled={isLoading} />
 
           <div className="text-sm text-center mt-4">
             <span>Don't have an account? </span>

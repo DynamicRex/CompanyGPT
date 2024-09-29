@@ -103,10 +103,10 @@ const SignUp: React.FC = () => {
 
       // After successful sign-up, log the user in automatically
       const response = await loginAPI({ email, password });
-      const { access_token } = response.data;
+      const { access_token, user_id } = response.data; // <-- Extract user_id from the response
 
-      // Dispatch login action to store token and role in Redux store
-      dispatch(login({ token: access_token, role: 'superuser' })); // Role is always superuser in the sign-up flow
+      // Dispatch login action to store token, role, and userId in Redux store
+      dispatch(login({ token: access_token, role: 'superuser', userId: user_id })); // Role is always superuser in the sign-up flow
 
       // Redirect to the superuser dashboard
       navigate('/dashboard/superuser');

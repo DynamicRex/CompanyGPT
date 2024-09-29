@@ -127,7 +127,8 @@ async def login(email: EmailStr = Body(...), password: str = Body(...)):
     return {
         "access_token": access_token, 
         "token_type": "bearer",
-        "role": user["role"]  # Include role in the response
+        "role": user["role"],  # Include role in the response
+        "user_id": str(user["_id"])  # <-- Include user_id in the response
     }
 
 # Protected Route Example

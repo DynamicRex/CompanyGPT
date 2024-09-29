@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface AddProfileModalProps {
   isOpen: boolean;
@@ -42,6 +44,33 @@ const AddProfileModal: React.FC<AddProfileModalProps> = ({ isOpen, onClose, onSu
     e.preventDefault();
     if (validateForm()) {
       onSubmit({ name, email, password });
+
+      // Show success toast notification
+      toast.success('User account created successfully!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      // Clear form fields after successful submission
+      setName('');
+      setEmail('');
+      setPassword('');
+    } else if (error) {
+      // Show error toast notification
+      toast.error(error, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
 
@@ -67,10 +96,11 @@ const AddProfileModal: React.FC<AddProfileModalProps> = ({ isOpen, onClose, onSu
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+      <ToastContainer />
       <div ref={modalRef} className="bg-white rounded-2xl w-1/3 p-6 shadow-xl relative">
         {/* Close button */}
         <button
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 focus:outline-none text-3xl p-2" // Increased size and padding
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 focus:outline-none text-3xl p-2"
           onClick={onClose}
         >
           &times;
@@ -119,9 +149,6 @@ const AddProfileModal: React.FC<AddProfileModalProps> = ({ isOpen, onClose, onSu
               required
             />
           </div>
-
-          {/* Error Message */}
-          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
           {/* Submit Button */}
           <button

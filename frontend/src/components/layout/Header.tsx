@@ -5,6 +5,9 @@ import { Link } from 'react-router-dom';
 import Logo from '../common/Logo';
 import AddProfileModal from '../modals/AddProfileModal'; // Import the AddProfileModal component
 import { SuperuserProfileButton, UserProfileButton } from './ProfileButton'; // Import both profile buttons
+import { addUser } from '../../services/userService'; // Import the addUser function
+import { useSelector } from 'react-redux'; // Import useSelector for accessing Redux store
+import { RootState } from '../../stores'; // Import RootState to define the Redux state structure
 
 // Common HeaderProps interface for both headers
 interface HeaderProps {
@@ -60,6 +63,9 @@ export const HeaderLogin: React.FC<HeaderProps> = ({ showSignUpButton }) => {
 // Header component for Superuser Dashboard (without login button)
 export const HeaderSuperuser: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Error state for API responses
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Success state
+  const superuserId = useSelector((state: RootState) => state.auth.userId); // <-- Use userId from Redux instead of token
 
   const handleOpenModal = () => {
     setIsModalOpen(true); // Open the modal
@@ -67,17 +73,29 @@ export const HeaderSuperuser: React.FC = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false); // Close the modal
+    setErrorMessage(null); // Reset error message
+    setSuccessMessage(null); // Reset success message
   };
 
-  const handleAddProfile = (formData: { name: string; email: string; password: string }) => {
-    // Handle the form submission logic here (e.g., call the backend API to add the profile)
-    console.log("Adding profile:", formData);
-    // Close the modal after form submission
-    setIsModalOpen(false);
+  const handleAddProfile = async (formData: { name: string; email: string; password: string }) => {
+    try {
+      // Call the backend API to add the profile
+      await addUser(superuserId!, {
+        full_name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+      setSuccessMessage('User account created successfully.'); // Set success message
+      setTimeout(() => {
+        setIsModalOpen(false); // Close modal after success
+      }, 2000); // Auto-close modal after 2 seconds
+    } catch (error: any) {
+      setErrorMessage(error.message); // Handle errors by displaying the error message in the modal
+    }
   };
 
   return (
-    <header className={headerStyle}>
+    <header className="w-full fixed top-0 bg-white border-b border-gray-200 z-50 flex justify-between items-center h-14">
       <div className="w-full px-2 py-2 flex justify-between items-center">
         <div className="flex items-center">
           <Logo />
@@ -103,6 +121,8 @@ export const HeaderSuperuser: React.FC = () => {
         onClose={handleCloseModal} // Close modal handler
         onSubmit={handleAddProfile} // Submit handler for the modal form
       />
+      {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>} {/* Error Message */}
+      {successMessage && <p className="text-green-500 text-center">{successMessage}</p>} {/* Success Message */}
     </header>
   );
 };

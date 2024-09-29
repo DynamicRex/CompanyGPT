@@ -14,7 +14,8 @@ const signup = async (userData: { full_name: string; email: string; password: st
 // Login
 const login = async (credentials: { email: string; password: string }) => {
   try {
-    return await axios.post(`${API_URL}/auth/login`, credentials);
+    const response = await axios.post(`${API_URL}/auth/login`, credentials);
+    return response; // <-- Ensure the user_id is handled correctly in the response
   } catch (error: any) {
     return Promise.reject(error.response?.data || 'Login failed');
   }

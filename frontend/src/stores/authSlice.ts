@@ -7,12 +7,14 @@ interface AuthState {
   token: string | null;
   role: string | null;
   isAuthenticated: boolean;
+  userId: string | null; // <-- Add userId to store superuser ID
 }
 
 const initialState: AuthState = {
   token: null,
   role: null,
   isAuthenticated: false,
+  userId: null,  // <-- Initialize userId
 };
 
 // Create the auth slice
@@ -21,22 +23,26 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     // Action to log the user in
-    login: (state, action: PayloadAction<{ token: string; role: string }>) => {
+    login: (state, action: PayloadAction<{ token: string; role: string; userId: string }>) => {
       state.token = action.payload.token;
       state.role = action.payload.role;
+      state.userId = action.payload.userId; // <-- Store userId in state
       state.isAuthenticated = true;
-      // Store the token and role in localStorage for persistence
+      // Store the token, role, and userId in localStorage for persistence
       localStorage.setItem('token', action.payload.token);
-      localStorage.setItem('role', action.payload.role); // Add role to localStorage
+      localStorage.setItem('role', action.payload.role);
+      localStorage.setItem('userId', action.payload.userId); // <-- Store userId in localStorage
     },
     // Action to log the user out
     logout: (state) => {
       state.token = null;
       state.role = null;
+      state.userId = null; // <-- Clear userId on logout
       state.isAuthenticated = false;
-      // Remove token and role from localStorage
+      // Remove token, role, and userId from localStorage
       localStorage.removeItem('token');
       localStorage.removeItem('role');
+      localStorage.removeItem('userId'); // <-- Remove userId from localStorage
     },
   },
 });

@@ -16,8 +16,12 @@ api.interceptors.request.use(
     const state = store.getState(); // Get the current state from Redux
     const token = state.auth.token; // Get the JWT token from Redux
 
+    console.log("Token being attached to request:", token); // Log the token before attaching to headers
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;  
+    } else {
+      console.warn("No token found in Redux store");
     }
     return config;
   },

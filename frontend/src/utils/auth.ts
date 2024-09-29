@@ -7,8 +7,9 @@ import store from '../stores';
 export const loadAuthFromLocalStorage = () => {
   const token = localStorage.getItem('token');
   const role = localStorage.getItem('role');
+  const userId = localStorage.getItem('userId'); // <-- Load userId from localStorage
 
-  if (token && role) {
-    store.dispatch(login({ token, role }));
+  if (token && role && userId) {
+    store.dispatch(login({ token, role, userId })); // <-- Dispatch userId along with token and role
   }
 };

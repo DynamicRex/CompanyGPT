@@ -1,4 +1,3 @@
-# backend/api/middleware.py
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi import Request, HTTPException
 from starlette.responses import JSONResponse
@@ -8,6 +7,10 @@ from backend.utils.logging import logger  # Import the logger
 class JWTAuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         try:
+            # Skip OPTIONS method (preflight CORS requests)
+            if request.method == "OPTIONS":
+                return await call_next(request)
+
             # Skip certain routes like login and signup
             if request.url.path in ["/auth/login", "/auth/signup"]:
                 return await call_next(request)
