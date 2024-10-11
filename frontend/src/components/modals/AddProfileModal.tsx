@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 interface AddProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (formData: { name: string; email: string; password: string }) => void;
+  onSubmit: (formData: { name: string; email: string; password: string }) => Promise<any>;
 }
 
 const AddProfileModal: React.FC<AddProfileModalProps> = ({ isOpen, onClose, onSubmit }) => {
@@ -40,30 +40,44 @@ const AddProfileModal: React.FC<AddProfileModalProps> = ({ isOpen, onClose, onSu
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      onSubmit({ name, email, password });
+      try {
+        // Await the result of the form submission
+        await onSubmit({ name, email, password });
 
-      // Show success toast notification
-      toast.success('User account created successfully!', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+        // Show success toast notification only if user is created
+        toast.success('User account created successfully!', {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
 
-      // Clear form fields after successful submission
-      setName('');
-      setEmail('');
-      setPassword('');
+        // Clear form fields after successful submission
+        setName('');
+        setEmail('');
+        setPassword('');
+      } catch (err: any) {
+        // Catch the error from the backend and display it in the toast
+        toast.error(err.message || 'An error occurred. Please try again.', {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
     } else if (error) {
-      // Show error toast notification
+      // Show error toast notification for form validation errors
       toast.error(error, {
-        position: "top-right",
+        position: 'top-right',
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -75,11 +89,14 @@ const AddProfileModal: React.FC<AddProfileModalProps> = ({ isOpen, onClose, onSu
   };
 
   // Dismiss the modal when clicking outside of it
-  const handleClickOutside = useCallback((event: MouseEvent) => {
-    if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-      onClose();
-    }
-  }, [onClose]);
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    },
+    [onClose]
+  );
 
   useEffect(() => {
     if (isOpen) {

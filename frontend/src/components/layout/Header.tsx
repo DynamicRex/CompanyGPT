@@ -1,5 +1,3 @@
-// frontend/src/components/layout/Header.tsx
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '../common/Logo';
@@ -63,8 +61,6 @@ export const HeaderLogin: React.FC<HeaderProps> = ({ showSignUpButton }) => {
 // Header component for Superuser Dashboard (without login button)
 export const HeaderSuperuser: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Error state for API responses
-  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Success state
   const superuserId = useSelector((state: RootState) => state.auth.userId); // <-- Use userId from Redux instead of token
 
   const handleOpenModal = () => {
@@ -73,8 +69,6 @@ export const HeaderSuperuser: React.FC = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false); // Close the modal
-    setErrorMessage(null); // Reset error message
-    setSuccessMessage(null); // Reset success message
   };
 
   const handleAddProfile = async (formData: { name: string; email: string; password: string }) => {
@@ -85,12 +79,12 @@ export const HeaderSuperuser: React.FC = () => {
         email: formData.email,
         password: formData.password,
       });
-      setSuccessMessage('User account created successfully.'); // Set success message
+      // Toast notifications for success will be handled in the modal component
       setTimeout(() => {
         setIsModalOpen(false); // Close modal after success
       }, 2000); // Auto-close modal after 2 seconds
     } catch (error: any) {
-      setErrorMessage(error.message); // Handle errors by displaying the error message in the modal
+      // Toast notifications for error will be handled in the modal component
     }
   };
 
@@ -121,8 +115,6 @@ export const HeaderSuperuser: React.FC = () => {
         onClose={handleCloseModal} // Close modal handler
         onSubmit={handleAddProfile} // Submit handler for the modal form
       />
-      {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>} {/* Error Message */}
-      {successMessage && <p className="text-green-500 text-center">{successMessage}</p>} {/* Success Message */}
     </header>
   );
 };
