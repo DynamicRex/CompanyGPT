@@ -41,9 +41,3 @@ def user_helper(user) -> dict:
         "updated_at": user["updated_at"],
         "last_login": user.get("last_login", None)
     }
-
-# Add OpenAI API key configuration
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-# Optional: You can print the API key (temporarily) to confirm it's loaded properly
-print("OpenAI API Key:", OPENAI_API_KEY)
